@@ -1,7 +1,8 @@
 <?php
 
 //if (session_id() == '')
-//    session_start();
+    session_start();
+require_once("lib/util.php");
 require_once("lib/config.php");
 
 ?>

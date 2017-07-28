@@ -22,6 +22,14 @@ $page_css[] = "your_style.css";
 $no_main_header = true;
 $page_body_prop = array("id"=>"extr-page", "class"=>"animated fadeInDown");
 include("inc/header.php");
+$page="";
+if(isset($_GET["page"])){
+    if($_GET["page"]=="logoff"){
+        $_SESSION["oc_page"]="";
+    }else{
+        $page = $_SESSION["oc_page"];
+    }
+}
 
 ?>
 <!-- ==========================CONTENT STARTS HERE ========================== -->
@@ -46,14 +54,14 @@ include("inc/header.php");
 
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-7 col-lg-8 hidden-xs hidden-sm">
-				<h1 class="txt-color-red login-header-big">SmartAdmin</h1>
+				<h1 class="txt-color-red login-header-big">OrisCom</h1>
 				<div class="hero">
 
 					<div class="pull-left login-desc-box-l">
 						<h4 class="paragraph-header">It's Okay to be Smart. Experience the simplicity of SmartAdmin, everywhere you go!</h4>
 						<div class="login-app-icons">
-							<a href="javascript:void(0);" class="btn btn-danger btn-sm">Frontend Template</a>
-							<a href="javascript:void(0);" class="btn btn-danger btn-sm">Find out more</a>
+							<!--<a href="javascript:void(0);" class="btn btn-danger btn-sm">Frontend Template</a>
+							<a href="javascript:void(0);" class="btn btn-danger btn-sm">Find out more</a>-->
 						</div>
 					</div>
 					
@@ -63,16 +71,16 @@ include("inc/header.php");
 
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-						<h5 class="about-heading">About SmartAdmin - Are you up to date?</h5>
+						<!--<h5 class="about-heading">About SmartAdmin - Are you up to date?</h5>
 						<p>
 							Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa.
-						</p>
+						</p>-->
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-						<h5 class="about-heading">Not just your average template!</h5>
+						<!--<h5 class="about-heading">Not just your average template!</h5>
 						<p>
 							Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi voluptatem accusantium!
-						</p>
+						</p>-->
 					</div>
 				</div>
 
@@ -184,6 +192,30 @@ include("inc/header.php");
 			}
 		});
 	});
+        $("#btnLogin").click(checkLogin);
+    function checkLogin(){
+        //alert("aaa");
+        $.ajax({
+            type: 'GET', url: 'getAmphur.php', contentType: "application/json", dataType: 'text', 
+            data: { 'flagPage':"login" }, 
+            success: function (data) {
+                var page = '<?php echo $_SESSION["orc_page"]; ?>';
+//                alert('bbbbb'+data+"page"+page);
+                var json_obj = $.parseJSON(data);
+                for (var i in json_obj){
+                    //$("#reRecDoc").val(json_obj[i].doc);
+//                    alert('page '+data);
+                    //$( "form" ).submit();
+                    if(page==""){
+                        window.location.assign("index.php");
+                    }else{
+                        window.location.assign(page);
+                    }
+                    
+                }
+            }
+        });
+    }
 </script>
 
 <?php 

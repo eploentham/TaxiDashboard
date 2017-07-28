@@ -14,7 +14,6 @@ defined("APP_URL") ? null : define("APP_URL", str_replace("/lib", "", $base_url)
 //Assets URL, location of your css, img, js, etc. files
 defined("ASSETS_URL") ? null : define("ASSETS_URL", APP_URL);
 
-
 //require library files
 //require_once("util.php");
 
