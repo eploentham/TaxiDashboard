@@ -1023,7 +1023,57 @@
 		    });
 		
 		}
+		/*
+		 * VECTOR MAP
+		 */
 		
+		data_array = {
+		    "US": 4977,
+		    "AU": 4873,
+		    "IN": 3671,
+		    "BR": 2476,
+		    "TR": 1476,
+		    "CN": 146,
+		    "CA": 134,
+		    "BD": 100
+		};
+		
+		// Load Map dependency 1 then call for dependency 2 and then run renderVectorMap function
+		loadScript("js/plugin/vectormap/jquery-jvectormap-1.2.2.min.js", function(){
+			loadScript("js/plugin/vectormap/jquery-jvectormap-world-mill-en.js", renderVectorMap);
+                        loadScript("js/plugin/vectormap/jquery-jvectormap-th-mill.js", renderVectorMap);
+		});
+		
+
+		function renderVectorMap() {
+		    $('#vector-map').vectorMap({
+		        map: 'th_mill',
+		        backgroundColor: '#fff',
+		        regionStyle: {
+		            initial: {
+		                fill: '#c4c4c4'
+		            },
+		            hover: {
+		                "fill-opacity": 1
+		            }
+		        },
+		        series: {
+		            regions: [{
+		                values: data_array,
+		                scale: ['#85a8b6', '#4d7686'],
+		                normalizeFunction: 'polynomial'
+		            }]
+		        },
+		        onRegionLabelShow: function (e, el, code) {
+		            if (typeof data_array[code] == 'undefined') {
+		                e.preventDefault();
+		            } else {
+		                var countrylbl = data_array[code];
+		                el.html(el.html() + ': ' + countrylbl + ' visits');
+		            }
+		        }
+		    });
+		}
 	
 	};
 	
