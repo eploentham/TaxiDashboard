@@ -663,7 +663,33 @@
 		/*
 		 * RUN PAGE GRAPHS
 		 */
-
+                getCar();
+                function getCar(){
+                    $.ajax({
+                        type: 'GET', url: 'getAmphur.php', contentType: "application/json", dataType: 'text', 
+                        data: { 'flagPage':"checkUser"
+                        ,'staff_username': $("#username").val()}, 
+                        success: function (data) {
+            //                alert('bbbbb'+data);
+                            var json_obj = $.parseJSON(data);
+                            for (var i in json_obj){
+                                if((json_obj[i].staff_name_t!="") && (json_obj[i].rows!="0")) {
+                                    $("#compAlert").removeClass("alert alert-block alert-success");
+                                    $("#compAlert").addClass("alert alert-block alert-danger");
+                                    $("#compAlert").empty();
+                                    $("#compAlert").append("มี username นี้ ได้ถูกใช้งานแล้ว "+json_obj[i].staff_name_t);
+                                    $("#compAlert").show();
+                                }else{
+                                    $("#compAlert").removeClass("alert alert-block alert-danger");
+                                    $("#compAlert").addClass("alert alert-block alert-success");
+                                    $("#compAlert").empty();
+                                    $("#compAlert").append(" username นี้ OK ");
+                                    $("#compAlert").show();
+                                }
+                            }
+                        }
+                    });
+                }
 		// load all flot plugins
 		loadScript("js/plugin/flot/jquery.flot.cust.min.js", function(){
 			loadScript("js/plugin/flot/jquery.flot.resize.min.js", function(){
