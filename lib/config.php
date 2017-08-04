@@ -13,10 +13,11 @@ if(strpos($directory, $document_root)===0) {
 defined("APP_URL") ? null : define("APP_URL", str_replace("/lib", "", $base_url));
 //Assets URL, location of your css, img, js, etc. files
 defined("ASSETS_URL") ? null : define("ASSETS_URL", APP_URL);
+defined("ASSETS_URL") ? null : define("ASSETS_URL", APP_URL);
 
 //require library files
 //require_once("util.php");
-
+require_once("util.php");
 require_once("func.global.php");
 
 require_once("smartui/class.smartutil.php");
