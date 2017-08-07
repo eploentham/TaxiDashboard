@@ -8,6 +8,7 @@ if (mysqli_connect_errno())
 mysqli_set_charset($conn, "UTF8");
 $tr="";
 $trS5="";
+$trS6="";
 $gr="";
 $grCnt="";
 $agTrip=0;
@@ -26,8 +27,10 @@ $agincome=0;
 $agDist=0;
 $agDistFree=0;
 $colorGr="['#E979BB', '#57889C']";
+$curDate = date("Y-m-d");
+//echo getdate("Y.m.d");
 $sql="SELECT daily_date, count(1) as cnt, sum(income) as income, sum(trip_cnt) as trip_cnt, sum(trip_distance) as trip_distance, sum(distance) as distance FROM car_daily "
-    ."Where daily_date <= '2017-08-03' and daily_date >= date_add('2017-08-03',INTERVAL -10 day) and income > 0 "
+    ."Where daily_date <= '".$curDate."' and daily_date >= date_add('".$curDate."',INTERVAL -90 day) and income > 0 "
     ."Group By daily_date "
     ."Order By daily_date;";
 if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
@@ -59,7 +62,7 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
 }
 $sql="SELECT hour(t_start_time) as hour, count(1) as cnt, sum(t_distance) as t_distance, sum(t_taxi_fare) as t_taxi_fare "
     ."FROM taxi_meter "
-    ."where t_start_time <= '2017-08-03' and t_start_time >= date_add('2017-08-03',INTERVAL -10 day) "
+    ."where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
     ."GROUP by hour(t_start_time)";
 if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
     while($row = mysqli_fetch_array($result)){
@@ -68,7 +71,16 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
 }else{
     echo mysqli_error($conn);
 }
-
+$sql="select  count(1) as cnt,sum(t_taxi_fare) as t_taxi_fare, dayofweek(t_start_time) as dayofweek From taxi_meter "
+    ."Where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
+    ."Group By dayofweek(t_start_time)";
+if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
+    while($row = mysqli_fetch_array($result)){
+        $trS6 .="<tr><td>".$row["dayofweek"]."</td><td>".$row["cnt"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
+    }
+}else{
+    echo mysqli_error($conn);
+}
 $result->free();
 mysqli_close($conn);
 ?>
@@ -79,7 +91,7 @@ mysqli_close($conn);
 	<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
             <ul id="sparks" class="">
                 <li class="sparks-info">
-                    <h5> My Income <span class="txt-color-blue">$47,171</span></h5>
+                    <h5> <?php echo $curDate;?> <span class="txt-color-blue">$47,171</span></h5>
                     <div class="sparkline txt-color-blue hidden-mobile hidden-md hidden-sm">
                             1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
                     </div>
@@ -388,7 +400,7 @@ mysqli_close($conn);
                                         </li>
 
                                         <li>
-                                            <a data-toggle="tab" href="#s3"><i class="fa fa-dollar"></i> <span class="hidden-mobile hidden-tablet">Revenue</span></a>
+                                            <a data-toggle="tab" href="#s6"><i class="fa fa-dollar"></i> <span class="hidden-mobile hidden-tablet">วันของสัปดาห์</span></a>
                                         </li>
                                     </ul>
 
@@ -480,6 +492,46 @@ mysqli_close($conn);
                                                 </tr>
                                             </tfoot>
                                         </table>
+                                    </div>
+                                    <div class="widget-body no-padding tab-pane fade" id="s6">
+                                    <!--<div class="tab-pane fade active in padding-10 no-padding-bottom" id="s4">-->
+                                            <!-- content goes here -->
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>วัน</th>
+                                                    <th>จำนวนครั้ง</th>
+                                                    <th class="text-align-center">รวมรายได้</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php echo $trS6;?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan=5>
+                                                    <ul class="pagination pagination-xs no-margin">
+                                                        <li class="prev disabled">
+                                                            <a href="javascript:void(0);">Previous</a>
+                                                        </li>
+                                                        <li class="active">
+                                                            <a href="javascript:void(0);">1</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:void(0);">2</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:void(0);">3</a>
+                                                        </li>
+                                                        <li class="next">
+                                                            <a href="javascript:void(0);">Next</a>
+                                                        </li>
+                                                    </ul></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <!-- end content -->
                                     </div>
 				</div>
 				<!-- end widget div -->

@@ -1,9 +1,13 @@
 <?php
 
-defined("DB_HOST") ? null : define("DB_HOST", "localhost");
-defined("DB_USER") ? null : define("DB_USER", "thaihotels");
-defined("DB_PASSWORD") ? null : define("DB_PASSWORD", "Thahr30*");
-defined("DB_NAME") ? null : define("DB_NAME", "thaihotels");
+//defined("DB_HOST") ? null : define("DB_HOST", "localhost");
+//defined("DB_USER") ? null : define("DB_USER", "thaihotels");
+//defined("DB_PASSWORD") ? null : define("DB_PASSWORD", "Thahr30*");
+//defined("DB_NAME") ? null : define("DB_NAME", "thaihotels");
+defined("DB_HOST") ? null : define("DB_HOST", "taxidashboard.ccegjxy0bmku.ap-southeast-1.rds.amazonaws.com");
+defined("DB_USER") ? null : define("DB_USER", "oriscom");
+defined("DB_PASSWORD") ? null : define("DB_PASSWORD", "mocsiro1*");
+defined("DB_NAME") ? null : define("DB_NAME", "daily_report");
 
 $conn = mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
 mysqli_set_charset($conn, "UTF8");
