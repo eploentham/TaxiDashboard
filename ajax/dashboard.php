@@ -7,6 +7,7 @@ if (mysqli_connect_errno())
 }
 mysqli_set_charset($conn, "UTF8");
 $tr="";
+$trS5="";
 $gr="";
 $grCnt="";
 $agTrip=0;
@@ -56,7 +57,17 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
 }else{
     echo mysqli_error($conn);
 }
-
+$sql="SELECT hour(t_start_time) as hour, count(1) as cnt, sum(t_distance) as t_distance, sum(t_taxi_fare) as t_taxi_fare "
+    ."FROM taxi_meter "
+    ."where t_start_time <= '2017-08-03' and t_start_time >= date_add('2017-08-03',INTERVAL -10 day) "
+    ."GROUP by hour(t_start_time)";
+if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
+    while($row = mysqli_fetch_array($result)){
+        $trS5 .="<tr><td>".$row["hour"]."</td><td>".$row["cnt"]."</td><td>".$row["t_distance"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
+    }
+}else{
+    echo mysqli_error($conn);
+}
 
 $result->free();
 mysqli_close($conn);
@@ -363,67 +374,113 @@ mysqli_close($conn);
 				-->
 
 				
+                                <header>
+                                    <span class="widget-icon"> <i class="glyphicon glyphicon-stats txt-color-darken"></i> </span>
+                                    <h2>Live Feeds </h2>
 
+                                    <ul class="nav nav-tabs pull-right in" id="myTab1">
+                                        <li class="active">
+                                            <a data-toggle="tab" href="#s4"><i class="fa fa-clock-o"></i> <span class="hidden-mobile hidden-tablet">ประจำวัน</span></a>
+                                        </li>
+
+                                        <li>
+                                            <a data-toggle="tab" href="#s5"><i class="fa fa-facebook"></i> <span class="hidden-mobile hidden-tablet">ช่วงเวลา</span></a>
+                                        </li>
+
+                                        <li>
+                                            <a data-toggle="tab" href="#s3"><i class="fa fa-dollar"></i> <span class="hidden-mobile hidden-tablet">Revenue</span></a>
+                                        </li>
+                                    </ul>
+
+				</header>
 				<!-- widget div-->
-				<div>
+				<div id="myTabContent1" class="tab-content">
 					<!-- widget edit box -->
-					<div class="jarviswidget-editbox">
-						<div>
-							<label>Title:</label>
-							<input type="text" />
-						</div>
-					</div>
+                                
 					<!-- end widget edit box -->
 
-					<div class="widget-body no-padding">
-						<!-- content goes here -->
-						
-						<div id="heat-fill">
-							<span class="fill-a">0</span>
-
-							<span class="fill-b">5,000</span>
-						</div>
-
-						<table class="table table-striped table-hover table-condensed">
-							<thead>
-								<tr>
-									<th>วันที่</th>
-									<th>จำนวนรถ</th>
-									<th class="text-align-center">ระยะทางทั้งหมดที่วิ่ง</th>
-									<th class="text-align-center hidden-xs">ระยะทาง รับผู้โดยสาร</th>
-                                                                        <th class="text-align-center hidden-xs">จำนวนครั้งในการรับผู้โดยสาร</th>
-									<th class="text-align-center">รวมรายได้</th>
-                                                                        <th class="text-align-center">Graphic</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php echo $tr;?>
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan=5>
-									<ul class="pagination pagination-xs no-margin">
-										<li class="prev disabled">
-											<a href="javascript:void(0);">Previous</a>
-										</li>
-										<li class="active">
-											<a href="javascript:void(0);">1</a>
-										</li>
-										<li>
-											<a href="javascript:void(0);">2</a>
-										</li>
-										<li>
-											<a href="javascript:void(0);">3</a>
-										</li>
-										<li class="next">
-											<a href="javascript:void(0);">Next</a>
-										</li>
-									</ul></td>
-								</tr>
-							</tfoot>
-						</table>
-						<!-- end content -->
-					</div>
+                                    <!--<div class="widget-body no-padding" id="s4">-->
+                                    <div class="widget-body no-padding tab-pane fade" id="s4">
+                                    <!--<div class="tab-pane fade active in padding-10 no-padding-bottom" id="s4">-->
+                                            <!-- content goes here -->
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>วันที่</th>
+                                                    <th>จำนวนรถ</th>
+                                                    <th class="text-align-center">ระยะทางทั้งหมดที่วิ่ง</th>
+                                                    <th class="text-align-center hidden-xs">ระยะทาง รับผู้โดยสาร</th>
+                                                    <th class="text-align-center hidden-xs">จำนวนครั้งในการรับผู้โดยสาร</th>
+                                                    <th class="text-align-center">รวมรายได้</th>
+                                                    <th class="text-align-center">Graphic</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php echo $tr;?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan=5>
+                                                    <ul class="pagination pagination-xs no-margin">
+                                                        <li class="prev disabled">
+                                                            <a href="javascript:void(0);">Previous</a>
+                                                        </li>
+                                                        <li class="active">
+                                                            <a href="javascript:void(0);">1</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:void(0);">2</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:void(0);">3</a>
+                                                        </li>
+                                                        <li class="next">
+                                                            <a href="javascript:void(0);">Next</a>
+                                                        </li>
+                                                    </ul></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <!-- end content -->
+                                    </div>
+                                    <!--<div class="widget-body no-padding" id="s5">-->
+                                    <div class="widget-body no-padding tab-pane fade" id="s5">
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>ช่วงเวลา</th>
+                                                    <th>จำนวนครั้ง</th>
+                                                    <th class="text-align-center">ระยะทาง รับผู้โดยสาร</th>
+                                                    <th class="text-align-center hidden-xs">รวมรายได้</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php echo $trS5;?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan=5>
+                                                    <ul class="pagination pagination-xs no-margin">
+                                                        <li class="prev disabled">
+                                                            <a href="javascript:void(0);">Previous</a>
+                                                        </li>
+                                                        <li class="active">
+                                                            <a href="javascript:void(0);">1</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:void(0);">2</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:void(0);">3</a>
+                                                        </li>
+                                                        <li class="next">
+                                                            <a href="javascript:void(0);">Next</a>
+                                                        </li>
+                                                    </ul></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
 				</div>
 				<!-- end widget div -->
 			</div>
