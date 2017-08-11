@@ -43,7 +43,7 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
         $agDistFree = $agDist - $agTrip2;
         $agTrip1 = 100-$agTrip;
         $agCnt1 = 100-$agCnt;
-        $trip = number_format($agTrip,0,",","").",".$agTrip1;
+        $trip = number_format($agTrip,0,",","").",".number_format($agTrip1,0,",","");
         $cnt = number_format($agCnt,0,",","");
         $income = number_format($agincome,2,",","");
         
@@ -53,9 +53,13 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
         $taCnt = "<table><tr><td width='40%'>".number_format($row["trip_cnt"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agCnt,2,".",",")."&nbsp;เที่ยว</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
         $taIncome = "<table><tr><td width='40%'>".number_format($row["income"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agincome,2,".",",")."&nbsp;บาท</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
         $taDist = "<table><tr><td width='40%'>".number_format($row["distance"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agDist,2,".",",")."&nbsp;กิโลเมตร</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
-        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
-            .$taTrip."</td><td>".$taCnt."</td><td>"
-            .$taIncome."</td><td>".$gr."</td></tr>";
+//        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
+//            .$taTrip."</td><td>".$taCnt."</td><td>"
+//            .$taIncome."</td><td>".$gr."</td></tr>";
+        
+//        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
+//            .$taTrip."</td><td>".$taCnt."</td><td>"
+//            .$taIncome."</td><td>".$gr."</td></tr>";
     }
 }else{
     echo mysqli_error($conn);
