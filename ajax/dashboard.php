@@ -26,6 +26,11 @@ $agCnt1=0;
 $agincome=0;
 $agDist=0;
 $agDistFree=0;
+$total=0;
+$totalIncome=0;
+$totalCar=0;
+$agTrip1=0;
+$row1=0;
 $colorGr="['#E979BB', '#57889C']";
 $curDate = date("Y-m-d");
 //echo getdate("Y.m.d");
@@ -35,6 +40,7 @@ $sql="SELECT daily_date, count(1) as cnt, sum(income) as income, sum(trip_cnt) a
     ."Order By daily_date;";
 if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
     while($row = mysqli_fetch_array($result)){
+        $row1++;
         $agTrip = ($row["trip_distance"] / $row["distance"] )*100;
         $agTrip2 = ($row["trip_distance"] / $row["cnt"] );
         $agCnt = ($row["trip_cnt"] / $row["cnt"] );
@@ -46,23 +52,36 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
         $trip = number_format($agTrip,0,",","").",".number_format($agTrip1,0,",","");
         $cnt = number_format($agCnt,0,",","");
         $income = number_format($agincome,2,",","");
-        
+        $dailyDate = $row['daily_date'];
+        $cnt1 = number_format($row['cnt']);
+        $sparkline .= $row["income"].", ";
+        $total += $row["income"];
+        $sparkcar .= $row["cnt"].", ";
+        $totalCar += $row["cnt"];
+        $agTrip3 += $agTrip;
+        $sparkIncome .= number_format($agincome,2,'.','').", ";
+        $totalIncome += number_format($agincome,2,".",",");
         $gr='<div class="sparkline display-inline" data-sparkline-type="pie" data-sparkline-piecolor=""'.$colorGr.'"" data-sparkline-offset="90" data-sparkline-piesize="23px">'.$trip.'</div>';
         $grCnt='<div class="sparkline display-inline" data-sparkline-type="pie" data-sparkline-piecolor=""'.$colorGr.'"" data-sparkline-offset="90" data-sparkline-piesize="23px">'.$cnt.'</div>';
-        $taTrip = "<table><tr><td width='20%'>".number_format($row["trip_distance"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agTrip2,2,".",",")
-            ." กิโลเมตร ".number_format($agTrip,2,".",",")."%&nbsp;</td><td> วิ่งรถเปล่า ".number_format($agDistFree,2,".",",")." &nbsp;&nbsp;&nbsp;".$gr."</td></tr></table>";
+        $taTrip = '<table><tr><td width=20%>'.number_format($row["trip_distance"],2,'.',',').'</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;'.number_format($agTrip2,2,'.',',')
+            .' กิโลเมตร '.number_format($agTrip,2,'.',',').'%&nbsp;</td><td> วิ่งรถเปล่า '.number_format($agDistFree,2,'.',',').' &nbsp;&nbsp;&nbsp;'.$gr.'</td></tr></table>';
         $taCnt = "<table><tr><td width='40%'>".number_format($row["trip_cnt"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agCnt,2,".",",")."&nbsp;เที่ยว</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
         $taIncome = "<table><tr><td width='40%'>".number_format($row["income"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agincome,2,".",",")."&nbsp;บาท</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
-        $taDist = "<table><tr><td width='40%'>".number_format($row["distance"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agDist,2,".",",")."&nbsp;กิโลเมตร</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
+        $taDist = '<table><tr><td width=40%>'.number_format($row['distance'],2,'.',',').'</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;'.number_format($agDist,2,'.',',').'&nbsp;กิโลเมตร</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>';
+        
+        $tr.="<tr><td>$dailyDate</td><td>$cnt1</td><td>$taDist</td><td>$taTrip</td><td>$taCnt</td><td>$taIncome</td><td>$gr</td></tr>";
         
 //        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
 //            .$taTrip."</td><td>".$taCnt."</td><td>"
 //            .$taIncome."</td><td>".$gr."</td></tr>";
-        
-        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
-            .$taTrip."</td><td>".$taCnt."</td><td>"
-            .$taIncome."</td><td>".$gr."</td></tr>";
+        //$tr.="<tr><td>$dailyDate</td><td>$cnt1</td><td>$taDist</td><td>$gr</td><td></td><td></td><td></td></tr>";
+//        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
+//            .$taTrip."</td><td>".$taCnt."</td><td>"
+//            .$taIncome."</td><td>".$gr."</td></tr>";
     }
+    $agCar = $totalCar / $row1;
+    $agIncome1 = $totalIncome / $row1;
+    $agTrip3 = $agTrip3 / $row1;
 }else{
     echo mysqli_error($conn);
 }
@@ -92,26 +111,26 @@ mysqli_close($conn);
 ?>
 <div class="row">
 	<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-		<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Dashboard <span>> My Dashboard</span></h1>
+		<h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Dashboard <span>> Taxi Dashboard</span></h1>
 	</div>
 	<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
             <ul id="sparks" class="">
                 <li class="sparks-info">
-                    <h5> <?php echo $curDate;?> <span class="txt-color-blue">$47,171</span></h5>
+                    <h5>รวมรายได้ <span class="txt-color-blue">&nbsp;<?php echo  number_format($total, 2);?></span></h5>
                     <div class="sparkline txt-color-blue hidden-mobile hidden-md hidden-sm">
-                            1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
+                            <?php echo $sparkline;?>
                     </div>
                 </li>
                 <li class="sparks-info">
-                    <h5> Site Traffic <span class="txt-color-purple"><i class="fa fa-arrow-circle-up"></i>&nbsp;45%</span></h5>
+                    <h5> เฉลี่ยรายได้ต่อวัน <span class="txt-color-purple"><i class="fa fa-arrow-circle-up"></i>&nbsp;<?php echo number_format($agIncome1);?></span></h5>
                     <div class="sparkline txt-color-purple hidden-mobile hidden-md hidden-sm">
-                            110,150,300,130,400,240,220,310,220,300, 270, 210
+                            <?php echo $sparkIncome;?>
                     </div>
                 </li>
                 <li class="sparks-info">
-                    <h5> Site Orders <span class="txt-color-greenDark"><i class="fa fa-shopping-cart"></i>&nbsp;2447</span></h5>
+                    <h5> เฉลี่ยจำนวนรถวิ่ง <span class="txt-color-greenDark"><i class="fa fa-shopping-cart"></i>&nbsp;<?php echo number_format($agCar);?></span></h5>
                     <div class="sparkline txt-color-greenDark hidden-mobile hidden-md hidden-sm">
-                            110,150,300,130,400,240,220,310,220,300, 270, 210
+                            <?php echo $sparkcar;?>
                     </div>
                 </li>
             </ul>
@@ -161,10 +180,7 @@ mysqli_close($conn);
 				<!-- widget div-->
 				<div class="no-padding">
                                     <!-- widget edit box -->
-                                    <div class="jarviswidget-editbox">
-
-                                            test
-                                    </div>
+                                    
                                     <!-- end widget edit box -->
 
                                     <div class="widget-body">
@@ -211,10 +227,10 @@ mysqli_close($conn);
                                                 <div class="show-stat-microcharts">
                                                         <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
 
-                                                                <div class="easy-pie-chart txt-color-orangeDark" data-percent="33" data-pie-size="50">
+                                                                <div class="easy-pie-chart txt-color-orangeDark" data-percent="<?php echo $agTrip3;?>" data-pie-size="50">
                                                                         <span class="percent percent-sign">35</span>
                                                                 </div>
-                                                                <span class="easy-pie-title"> Server Load <i class="fa fa-caret-up icon-color-bad"></i> </span>
+                                                                <span class="easy-pie-title"> เฉลี่ยรับผู้โดยสาร <i class="fa fa-caret-up icon-color-bad"></i> </span>
                                                                 <ul class="smaller-stat hidden-sm pull-right">
                                                                         <li>
                                                                                 <span class="label bg-color-greenLight"><i class="fa fa-caret-up"></i> 97%</span>
@@ -376,7 +392,11 @@ mysqli_close($conn);
 
 			<!-- new widget -->
 			<div class="jarviswidget" id="wid-id-2" data-widget-colorbutton="false" data-widget-editbutton="false">
+                            <header>
+                                    <span class="widget-icon"> <i class="fa fa-map-marker"></i> </span>
+                                    <h2>Daily report</h2>
 
+                            </header>
 				<!-- widget options:
 				usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 
@@ -390,35 +410,8 @@ mysqli_close($conn);
 				data-widget-sortable="false"
 
 				-->
-
-				
-                                <header>
-                                    <span class="widget-icon"> <i class="glyphicon glyphicon-stats txt-color-darken"></i> </span>
-                                    <h2>Live Feeds </h2>
-
-                                    <ul class="nav nav-tabs pull-right in" id="myTab1">
-                                        <li class="active">
-                                            <a data-toggle="tab" href="#s4"><i class="fa fa-clock-o"></i> <span class="hidden-mobile hidden-tablet">ประจำวัน</span></a>
-                                        </li>
-
-                                        <li>
-                                            <a data-toggle="tab" href="#s5"><i class="fa fa-facebook"></i> <span class="hidden-mobile hidden-tablet">ช่วงเวลา</span></a>
-                                        </li>
-
-                                        <li>
-                                            <a data-toggle="tab" href="#s6"><i class="fa fa-dollar"></i> <span class="hidden-mobile hidden-tablet">วันของสัปดาห์</span></a>
-                                        </li>
-                                    </ul>
-
-				</header>
-				<!-- widget div-->
-				<div id="myTabContent1" class="tab-content">
-					<!-- widget edit box -->
-                                
-					<!-- end widget edit box -->
-
-                                    <!--<div class="widget-body no-padding" id="s4">-->
-                                    <div class="widget-body no-padding tab-pane fade" id="s4">
+                                <div>
+                                    <div class="widget-body no-padding " id="s4">
                                     <!--<div class="tab-pane fade active in padding-10 no-padding-bottom" id="s4">-->
                                             <!-- content goes here -->
                                         <table class="table table-striped table-hover table-condensed">
@@ -433,9 +426,11 @@ mysqli_close($conn);
                                                     <th class="text-align-center">Graphic</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                                <tbody><tr><td>
                                                 <?php echo $tr;?>
-                                            </tbody>
+                                                    </td></tr>
+                                                
+                                                </tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan=5>
@@ -461,85 +456,21 @@ mysqli_close($conn);
                                         </table>
                                         <!-- end content -->
                                     </div>
+                                </div>
+				
+                                
+				<!-- widget div-->
+				
+					<!-- widget edit box -->
+                                
+					<!-- end widget edit box -->
+
+                                    <!--<div class="widget-body no-padding" id="s4">-->
+                                    
                                     <!--<div class="widget-body no-padding" id="s5">-->
-                                    <div class="widget-body no-padding tab-pane fade" id="s5">
-                                        <table class="table table-striped table-hover table-condensed">
-                                            <thead>
-                                                <tr>
-                                                    <th>ช่วงเวลา</th>
-                                                    <th>จำนวนครั้ง</th>
-                                                    <th class="text-align-center">ระยะทาง รับผู้โดยสาร</th>
-                                                    <th class="text-align-center hidden-xs">รวมรายได้</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php echo $trS5;?>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan=5>
-                                                    <ul class="pagination pagination-xs no-margin">
-                                                        <li class="prev disabled">
-                                                            <a href="javascript:void(0);">Previous</a>
-                                                        </li>
-                                                        <li class="active">
-                                                            <a href="javascript:void(0);">1</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="javascript:void(0);">2</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="javascript:void(0);">3</a>
-                                                        </li>
-                                                        <li class="next">
-                                                            <a href="javascript:void(0);">Next</a>
-                                                        </li>
-                                                    </ul></td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                    <div class="widget-body no-padding tab-pane fade" id="s6">
-                                    <!--<div class="tab-pane fade active in padding-10 no-padding-bottom" id="s4">-->
-                                            <!-- content goes here -->
-                                        <table class="table table-striped table-hover table-condensed">
-                                            <thead>
-                                                <tr>
-                                                    <th>วัน</th>
-                                                    <th>จำนวนครั้ง</th>
-                                                    <th class="text-align-center">รวมรายได้</th>
-                                                    
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php echo $trS6;?>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan=5>
-                                                    <ul class="pagination pagination-xs no-margin">
-                                                        <li class="prev disabled">
-                                                            <a href="javascript:void(0);">Previous</a>
-                                                        </li>
-                                                        <li class="active">
-                                                            <a href="javascript:void(0);">1</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="javascript:void(0);">2</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="javascript:void(0);">3</a>
-                                                        </li>
-                                                        <li class="next">
-                                                            <a href="javascript:void(0);">Next</a>
-                                                        </li>
-                                                    </ul></td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                        <!-- end content -->
-                                    </div>
-				</div>
+                                    
+                                    
+				
 				<!-- end widget div -->
 			</div>
 			<!-- end widget -->
