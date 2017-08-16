@@ -34,10 +34,12 @@ $row1=0;
 $colorGr="['#E979BB', '#57889C']";
 $curDate = date("Y-m-d");
 //echo getdate("Y.m.d");
+$maxTrip=0;
+$maxTripDate="";
 $sql="SELECT daily_date, count(1) as cnt, sum(income) as income, sum(trip_cnt) as trip_cnt, sum(trip_distance) as trip_distance, sum(distance) as distance FROM car_daily "
     ."Where daily_date <= '".$curDate."' and daily_date >= date_add('".$curDate."',INTERVAL -90 day) and income > 0 "
     ."Group By daily_date "
-    ."Order By daily_date;";
+    ."Order By daily_date desc;";
 if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
     while($row = mysqli_fetch_array($result)){
         $row1++;
@@ -61,15 +63,23 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
         $agTrip3 += $agTrip;
         $sparkIncome .= number_format($agincome,2,'.','').", ";
         $totalIncome += number_format($agincome,2,".",",");
+        if($maxTrip<$row["trip_cnt"]){
+            $maxTrip = $row["trip_cnt"];
+            $maxTripDate = $dailyDate;
+        }
+        $in="<input type='hidden' id='in".$row1."' value='".$row["trip_cnt"]."'>";
+        $inCnt="<input type='hidden' id='inCnt".$row1."' value='".$row["cnt"]."'>";
+        $inDistAll="<input type='hidden' id='inDistAll".$row1."' value='".$row["distance"]."'>";
+        $inDistTrip="<input type='hidden' id='inDistTrip".$row1."' value='".$row["trip_distance"]."'>";
         $gr='<div class="sparkline display-inline" data-sparkline-type="pie" data-sparkline-piecolor=""'.$colorGr.'"" data-sparkline-offset="90" data-sparkline-piesize="23px">'.$trip.'</div>';
         $grCnt='<div class="sparkline display-inline" data-sparkline-type="pie" data-sparkline-piecolor=""'.$colorGr.'"" data-sparkline-offset="90" data-sparkline-piesize="23px">'.$cnt.'</div>';
         $taTrip = '<table><tr><td width=20%>'.number_format($row["trip_distance"],2,'.',',').'</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;'.number_format($agTrip2,2,'.',',')
             .' กิโลเมตร '.number_format($agTrip,2,'.',',').'%&nbsp;</td><td> วิ่งรถเปล่า '.number_format($agDistFree,2,'.',',').' &nbsp;&nbsp;&nbsp;'.$gr.'</td></tr></table>';
-        $taCnt = "<table><tr><td width='40%'>".number_format($row["trip_cnt"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agCnt,2,".",",")."&nbsp;เที่ยว</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
+        $taCnt = "<table><tr><td width='40%'>".number_format($row["trip_cnt"])."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agCnt)."&nbsp;เที่ยว</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
         $taIncome = "<table><tr><td width='40%'>".number_format($row["income"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agincome,2,".",",")."&nbsp;บาท</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
         $taDist = '<table><tr><td width=40%>'.number_format($row['distance'],2,'.',',').'</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;'.number_format($agDist,2,'.',',').'&nbsp;กิโลเมตร</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>';
         
-        $tr.="<tr><td>$dailyDate</td><td>$cnt1</td><td>$taDist</td><td>$taTrip</td><td>$taCnt</td><td>$taIncome</td><td>$gr</td></tr>";
+        $tr.="<tr id='tr$row1'><td>$dailyDate$in$inCnt$inDistAll$inDistTrip</td><td>$cnt1</td><td>$taDist</td><td>$taTrip</td><td>$taCnt</td><td>$taIncome</td><td>$gr</td></tr>";
         
 //        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
 //            .$taTrip."</td><td>".$taCnt."</td><td>"
@@ -79,36 +89,55 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
 //            .$taTrip."</td><td>".$taCnt."</td><td>"
 //            .$taIncome."</td><td>".$gr."</td></tr>";
     }
+    //$tr = str_replace('<tr id='.$maxTripDate.'', '<tr id='.$dailyDate,'', $tr);
+    $inMax="<input type='hidden' id='inmax' value=$row1>";
     $agCar = $totalCar / $row1;
     $agIncome1 = $totalIncome / $row1;
     $agTrip3 = $agTrip3 / $row1;
 }else{
     echo mysqli_error($conn);
 }
-$sql="SELECT hour(t_start_time) as hour, count(1) as cnt, sum(t_distance) as t_distance, sum(t_taxi_fare) as t_taxi_fare "
-    ."FROM taxi_meter "
-    ."where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
-    ."GROUP by hour(t_start_time)";
-if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
-    while($row = mysqli_fetch_array($result)){
-        $trS5 .="<tr><td>".$row["hour"]."</td><td>".$row["cnt"]."</td><td>".$row["t_distance"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
+//$sql="SELECT hour(t_start_time) as hour, count(1) as cnt, sum(t_distance) as t_distance, sum(t_taxi_fare) as t_taxi_fare "
+//    ."FROM taxi_meter "
+//    ."where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
+//    ."GROUP by hour(t_start_time)";
+//if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
+//    while($row = mysqli_fetch_array($result)){
+//        $trS5 .="<tr><td>".$row["hour"]."</td><td>".$row["cnt"]."</td><td>".$row["t_distance"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
+//    }
+//}else{
+//    echo mysqli_error($conn);
+//}
+//$sql="select  count(1) as cnt,sum(t_taxi_fare) as t_taxi_fare, dayofweek(t_start_time) as dayofweek From taxi_meter "
+//    ."Where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
+//    ."Group By dayofweek(t_start_time)";
+//if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
+//    while($row = mysqli_fetch_array($result)){
+//        $trS6 .="<tr><td>".$row["dayofweek"]."</td><td>".$row["cnt"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
+//    }
+//}else{
+//    echo mysqli_error($conn);
+//}
+$max=0;
+$modeofmean1 ="";
+$sql="select count(1) as cnt, ceil_income from car_daily where ceil_income >0 and daily_date <= '".$curDate."' and daily_date >= date_add('".$curDate."',INTERVAL -90 day) group by ceil_income order by ceil_income";
+if ($modeofmean=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
+    while($row = mysqli_fetch_array($modeofmean)){
+        if(($row["ceil_income"]>=200)&&($row["ceil_income"]<=3400)){
+            $modeofmean1 .= "[".$row["ceil_income"].",".$row["cnt"]."],";
+            $trCeil .="<tr><td>".$row["ceil_income"]."</td><td>".$row["cnt"]."</td></tr>";
+        }
+        
+        if($max<$row["ceil_income"]){
+            $max = $row["ceil_income"];
+        }
     }
 }else{
     echo mysqli_error($conn);
 }
-$sql="select  count(1) as cnt,sum(t_taxi_fare) as t_taxi_fare, dayofweek(t_start_time) as dayofweek From taxi_meter "
-    ."Where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
-    ."Group By dayofweek(t_start_time)";
-if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
-    while($row = mysqli_fetch_array($result)){
-        $trS6 .="<tr><td>".$row["dayofweek"]."</td><td>".$row["cnt"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
-    }
-}else{
-    echo mysqli_error($conn);
-}
-
-
-
+//foreach ($modeofmean as $key => $value) {
+//    $trCeil .="<tr><td>".$key["ceil_income"]."</td><td>".$key["cnt"]."</td></tr>";
+//}
 $result->free();
 mysqli_close($conn);
 ?>
@@ -170,7 +199,7 @@ mysqli_close($conn);
                                         </li>
 
                                         <li>
-                                            <a data-toggle="tab" href="#s2"><i class="fa fa-facebook"></i> <span class="hidden-mobile hidden-tablet">Social Network</span></a>
+                                            <a data-toggle="tab" href="#s2"><i class="fa fa-facebook"></i> <span class="hidden-mobile hidden-tablet">สถิติ</span></a>
                                         </li>
 
                                         <li>
@@ -302,38 +331,38 @@ mysqli_close($conn);
                                             </div>
                                                 <!-- end s1 tab pane -->
 
-                                            <div class="tab-pane fade" id="s2">
-                                                <div class="widget-body-toolbar bg-color-white">
+            <div class="tab-pane fade" id="s2">
+                <div class="widget-body-toolbar bg-color-white">
 
-                                                    <form class="form-inline" role="form">
+                    <form class="form-inline" role="form">
 
-                                                        <div class="form-group">
-                                                            <label class="sr-only" for="s123">Show From</label>
-                                                            <input type="email" class="form-control input-sm" id="s123" placeholder="Show From">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input type="email" class="form-control input-sm" id="s124" placeholder="To">
-                                                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="s123">Show From</label>
+                            <input type="email" class="form-control input-sm" id="s123" placeholder="Show From">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control input-sm" id="s124" placeholder="To">
+                        </div>
 
-                                                        <div class="btn-group hidden-phone pull-right">
-                                                            <a class="btn dropdown-toggle btn-xs btn-default" data-toggle="dropdown"><i class="fa fa-cog"></i> More <span class="caret"> </span> </a>
-                                                            <ul class="dropdown-menu pull-right">
-                                                                <li>
-                                                                        <a href="javascript:void(0);"><i class="fa fa-file-text-alt"></i> Export to PDF</a>
-                                                                </li>
-                                                                <li>
-                                                                        <a href="javascript:void(0);"><i class="fa fa-question-sign"></i> Help</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
+                        <div class="btn-group hidden-phone pull-right">
+                            <a class="btn dropdown-toggle btn-xs btn-default" data-toggle="dropdown"><i class="fa fa-cog"></i> More <span class="caret"> </span> </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li>
+                                        <a href="javascript:void(0);"><i class="fa fa-file-text-alt"></i> Export to PDF</a>
+                                </li>
+                                <li>
+                                        <a href="javascript:void(0);"><i class="fa fa-question-sign"></i> Help</a>
+                                </li>
+                            </ul>
+                        </div>
 
-                                                    </form>
-                                                </div>
-                                                <div class="padding-10">
-                                                        <div id="statsChart" class="chart-large has-legend-unique"></div>
-                                                </div>
+                    </form>
+                </div>
+                <div class="padding-10">
+                    <div id="statsChart" class="chart-large has-legend-unique"></div>
+                </div>
 
-                                            </div>
+            </div>
                                                 <!-- end s2 tab pane -->
 
                                             <div class="tab-pane fade" id="s3">
@@ -432,7 +461,7 @@ mysqli_close($conn);
                                                 <tbody><tr><td>
                                                 <?php echo $tr;?>
                                                     </td></tr>
-                                                
+                                                <?php echo $inMax;?>
                                                 </tbody>
                                             <tfoot>
                                                 <tr>
@@ -460,7 +489,23 @@ mysqli_close($conn);
                                         <!-- end content -->
                                     </div>
                                 </div>
-				
+                                <!--<div>
+                                    <div class="widget-body no-padding " id="s41">
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>ceil</th>
+                                                    <th>value</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                                <tbody><tr><td>
+                                                        <?php// echo $trCeil;?>
+                                                    </td></tr>
+                                                </tbody>
+                                        </table>
+                                    </div>
+                                </div>-->
                                 
 				<!-- widget div-->
 				
@@ -521,7 +566,34 @@ mysqli_close($conn);
 	 var flot_updating_chart, flot_statsChart, flot_multigraph, calendar;
 
 	pageSetUp();
-	
+	var inmax = $("#inmax").val();
+        var max = 0, maxDist=100000;
+        var cnt=0;
+        var row="";
+        var rowDist="";
+        if(inmax>0){
+            for(var i=0;i<inmax;i++){
+                var tripcnt = parseInt($("#in"+i).val());
+                var cnt = parseInt($("#inCnt"+i).val());
+                var distAll = parseInt($("#inDistAll"+i).val());
+                var distTrip = parseInt($("#inDistTrip"+i).val());
+                var tripcnt1 = tripcnt/cnt;
+                var dist = (distAll - distTrip)/cnt;
+                if(tripcnt1>max){
+                    max = tripcnt1;
+                    row = i;
+                    //alert("max  "+max);
+                }
+                if(dist<maxDist){
+                    maxDist = dist;
+                    rowDist = i;
+                }
+            }
+        }
+        $("#tr"+row).css({backgroundColor: "#AAC3CD", color: "#000"});
+        $("#tr"+rowDist).css({backgroundColor: "#C8D0D3", color: "#000"});
+        //$("#tr"+row).addClass("label bg-color-darken");
+        //alert("max1 "+max);
 	/*
 	 * PAGE RELATED SCRIPTS
 	 */
@@ -734,22 +806,9 @@ mysqli_close($conn);
 		
 		    $(function () {
 		        // jQuery Flot Chart
-		        var twitter = [
-		            [1, 27],
-		            [2, 34],
-		            [3, 51],
-		            [4, 48],
-		            [5, 55],
-		            [6, 65],
-		            [7, 61],
-		            [8, 70],
-		            [9, 65],
-		            [10, 75],
-		            [11, 57],
-		            [12, 59],
-		            [13, 62]
-		        ],
-		            facebook = [
+                        
+		        var twitter = [ <?php echo $modeofmean1; ?>]
+		        var facebook = [
 		                [1, 25],
 		                [2, 31],
 		                [3, 45],
