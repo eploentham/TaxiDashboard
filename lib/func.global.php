@@ -51,5 +51,50 @@ function elog($log, $fn = "debug.log") {
 }
 
 //$days = ($month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year %400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31)); //returns days in the given month
-
+function getMonthName($monthId){
+    if($monthId==="1"){
+        return "มกราคม";
+    }else if($monthId==="2"){
+        return "กุมภาพันธ์";
+    }else if($monthId==="3"){
+        return "มีนาคม";
+    }else if($monthId==="4"){
+        return "เมษายน";
+    }else if($monthId==="5"){
+        return "พฤษภาคม";
+    }else if($monthId==="6"){
+        return "มิถุนายน";
+    }else if($monthId==="7"){
+        return "กรกฎาคม";
+    }else if($monthId==="8"){
+        return "สิงหาคม";
+    }else if($monthId==="9"){
+        return "กันยายน";
+    }else if($monthId==="10"){
+        return "ตุลาคม";
+    }else if($monthId==="11"){
+        return "พฤศจิกายน";
+    }else if($monthId==="12"){
+        return "ธันวาคม";
+    } 
+}
+function getDayName($dayId){
+    if($dayId==2){
+        return "จันทร์";
+    }else if($dayId==3){
+        return "อังคาร";
+    }else if($dayId==4){
+        return "พุธ";
+    }else if($dayId==5){
+        return "พฤหัสบดี";
+    }else if($dayId==6){
+        return "ศุกร์";
+    }else if($dayId==7){
+        return "เสาร์";
+    }else if($dayId==1){
+        return "อาทิตย์";
+    }else{
+        return $dayId;
+    }
+}
 ?>

@@ -107,31 +107,27 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
 }else{
     echo mysqli_error($conn);
 }
-$sql="SELECT hour(t_start_time) as hour, count(1) as cnt, sum(t_distance) as t_distance, sum(t_taxi_fare) as t_taxi_fare "
-    ."FROM taxi_meter "
-    ."where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
-    ."GROUP by hour(t_start_time)";
-if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
-    while($row = mysqli_fetch_array($result)){
-        $trS5 .="<tr><td>".$row["hour"]."</td><td>".$row["cnt"]."</td><td>".number_format($row["t_distance"],2,'.',',')."</td><td>".$row["t_taxi_fare"]."</td></tr>";
-    }
-}else{
-    echo mysqli_error($conn);
-}
-$distGs6=0;
-$incomeGs6=0;
-$sql="select  count(1) as cnt,sum(t_taxi_fare) as t_taxi_fare, dayofweek(t_start_time) as dayofweek, sum(t_distance) as t_distance From taxi_meter "
-    ."Where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
-    ."Group By dayofweek(t_start_time) order By dayofweek(t_start_time)";
-if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
-    while($row = mysqli_fetch_array($result)){
-        $distGs6 = ($row["t_distance"]/10);
-        $incomeGs6 = ($row["t_taxi_fare"]/100);
-        $trS6 .="<tr><td>".getDayName($row["dayofweek"])."</td><td>".$row["cnt"]."</td><td>".number_format($distGs6,2,'.',',')."</td><td>".$incomeGs6."</td></tr>";
-    }
-}else{
-    echo mysqli_error($conn);
-}
+//$sql="SELECT hour(t_start_time) as hour, count(1) as cnt, sum(t_distance) as t_distance, sum(t_taxi_fare) as t_taxi_fare "
+//    ."FROM taxi_meter "
+//    ."where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
+//    ."GROUP by hour(t_start_time)";
+//if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
+//    while($row = mysqli_fetch_array($result)){
+//        $trS5 .="<tr><td>".$row["hour"]."</td><td>".$row["cnt"]."</td><td>".$row["t_distance"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
+//    }
+//}else{
+//    echo mysqli_error($conn);
+//}
+//$sql="select  count(1) as cnt,sum(t_taxi_fare) as t_taxi_fare, dayofweek(t_start_time) as dayofweek From taxi_meter "
+//    ."Where t_start_time <= '".$curDate."' and t_start_time >= date_add('".$curDate."',INTERVAL -90 day) "
+//    ."Group By dayofweek(t_start_time)";
+//if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
+//    while($row = mysqli_fetch_array($result)){
+//        $trS6 .="<tr><td>".$row["dayofweek"]."</td><td>".$row["cnt"]."</td><td>".$row["t_taxi_fare"]."</td></tr>";
+//    }
+//}else{
+//    echo mysqli_error($conn);
+//}
 $max=0;
 $modeofmean1 ="";
 $sql="select count(1) as cnt, ceil_income from car_daily where ceil_income >0 and daily_date <= '".$curDate."' and daily_date >= date_add('".$curDate."',INTERVAL -90 day) group by ceil_income order by ceil_income";
@@ -258,38 +254,16 @@ mysqli_close($conn);
                                         <div id="myTabContent" class="tab-content">
                                             <div class="tab-pane fade active in padding-10 no-padding-bottom" id="s1">
                                                 <div class="row no-space">
-                                                        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                                                                <!--<span class="demo-liveupdate-1"> <span class="onoffswitch-title">Live switch</span> <span class="onoffswitch">
+                                                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                                <span class="demo-liveupdate-1"> <span class="onoffswitch-title">Live switch</span> <span class="onoffswitch">
                                                                                 <input type="checkbox" name="start_interval" class="onoffswitch-checkbox" id="start_interval">
                                                                                 <label class="onoffswitch-label" for="start_interval"> 
                                                                                         <span class="onoffswitch-inner" data-swchon-text="ON" data-swchoff-text="OFF"></span> 
                                                                                         <span class="onoffswitch-switch"></span> </label> </span> </span>
-                                                                <div id="updating-chart" class="chart-large txt-color-blue"></div>-->
-                                                            
-                                                            <!--<table class="table table-striped table-hover table-condensed">-->
-                                                            <div id="div31">
-                                                            <table class="highchart table table-hover table-bordered" data-graph-container=".. .. .highchart-container3" data-graph-type="line">
-                                                                <caption>ยอดสรุป รายวัน</caption>
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>ช่วงเวลา</th>
-                                                                    <th class="text-align-center">จำนวนรถ</th>
-                                                                    <th class="text-align-center hidden-xs">ระยะทาง รับผู้โดยสาร</th>
-                                                                    <th class="text-align-center">รวมรายได้</th>
-                                                                </tr>
-                                                            </thead>
-                                                                <tbody><tr><td>
-                                                                <?php echo $trS6;?>
-                                                                    </td></tr>
-                                                                </tbody>
-                                                            </table>
-                                                            </div>
-                                                            <div class="col-sm-12" id="div3">
-                                                                    <div class="highchart-container3"></div>
-                                                            </div>
+                                                                <div id="updating-chart" class="chart-large txt-color-blue"></div>
 
                                                         </div>
-                                                        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 show-stats">
+                                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 show-stats">
 
                                                                 <div class="row">
                                                                         <div class="col-xs-6 col-sm-6 col-md-12 col-lg-12"> <span class="text"> My Tasks <span class="pull-right">130/200</span> </span>
@@ -664,7 +638,6 @@ mysqli_close($conn);
 	pageSetUp();
         
         $("#div1").hide();
-        $("#div31").hide();
 	var inmax = $("#inmax").val();
         var max = 0, maxDist=100000;
         var cnt=0;
@@ -807,103 +780,103 @@ mysqli_close($conn);
 		    /* TAB 1: UPDATING CHART */
 		    // For the demo we use generated data, but normally it would be coming from the server
 		
-//		    var data = [],
-//		        totalPoints = 200,
-//		        $UpdatingChartColors = $("#updating-chart").css('color');
-//		
-//		    function getRandomData() {
-//		        if (data.length > 0)
-//		            data = data.slice(1);
-//		
-//		        // do a random walk
-//		        while (data.length < totalPoints) {
-//		            var prev = data.length > 0 ? data[data.length - 1] : 50;
-//		            var y = prev + Math.random() * 10 - 5;
-//		            if (y < 0)
-//		                y = 0;
-//		            if (y > 100)
-//		                y = 100;
-//		            data.push(y);
-//		        }
-//		
-//		        // zip the generated y values with the x values
-//		        var res = [];
-//		        for (var i = 0; i < data.length; ++i)
-//		            res.push([i, data[i]])
-//		        return res;
-//		    }
-//		
-//		    // setup control widget
-//		    var updateInterval = 1500;
-//		    $("#updating-chart").val(updateInterval).change(function () {
-//		
-//		        var v = $(this).val();
-//		        if (v && !isNaN(+v)) {
-//		            updateInterval = +v;
-//		            $(this).val("" + updateInterval);
-//		        }
-//		
-//		    });
-//		
-//		    // setup plot
-//		    var options = {
-//		        yaxis: {
-//		            min: 0,
-//		            max: 100
-//		        },
-//		        xaxis: {
-//		            min: 0,
-//		            max: 100
-//		        },
-//		        colors: [$UpdatingChartColors],
-//		        series: {
-//		            lines: {
-//		                lineWidth: 1,
-//		                fill: true,
-//		                fillColor: {
-//		                    colors: [{
-//		                        opacity: 0.4
-//		                    }, {
-//		                        opacity: 0
-//		                    }]
-//		                },
-//		                steps: false
-//		
-//		            }
-//		        }
-//		    };
-//		
-//		    flot_updating_chart = $.plot($("#updating-chart"), [getRandomData()], options);
-//		
-//		    /* live switch */
-//		    $('input[type="checkbox"]#start_interval').click(function () {
-//		        if ($(this).prop('checked')) {
-//		            $on = true;
-//		            updateInterval = 1500;
-//		            update();
-//		        } else {
-//		            clearInterval(updateInterval);
-//		            $on = false;
-//		        }
-//		    });
-//		
-//		    function update() {
-//
-//				try {
-//			        if ($on == true) {
-//			            flot_updating_chart.setData([getRandomData()]);
-//			            flot_updating_chart.draw();
-//			            setTimeout(update, updateInterval);
-//			
-//			        } else {
-//			            clearInterval(updateInterval)
-//			        }
-//				}
-//				catch(err) {
-//				    clearInterval(updateInterval);
-//				}
-//		
-//		    }
+		    var data = [],
+		        totalPoints = 200,
+		        $UpdatingChartColors = $("#updating-chart").css('color');
+		
+		    function getRandomData() {
+		        if (data.length > 0)
+		            data = data.slice(1);
+		
+		        // do a random walk
+		        while (data.length < totalPoints) {
+		            var prev = data.length > 0 ? data[data.length - 1] : 50;
+		            var y = prev + Math.random() * 10 - 5;
+		            if (y < 0)
+		                y = 0;
+		            if (y > 100)
+		                y = 100;
+		            data.push(y);
+		        }
+		
+		        // zip the generated y values with the x values
+		        var res = [];
+		        for (var i = 0; i < data.length; ++i)
+		            res.push([i, data[i]])
+		        return res;
+		    }
+		
+		    // setup control widget
+		    var updateInterval = 1500;
+		    $("#updating-chart").val(updateInterval).change(function () {
+		
+		        var v = $(this).val();
+		        if (v && !isNaN(+v)) {
+		            updateInterval = +v;
+		            $(this).val("" + updateInterval);
+		        }
+		
+		    });
+		
+		    // setup plot
+		    var options = {
+		        yaxis: {
+		            min: 0,
+		            max: 100
+		        },
+		        xaxis: {
+		            min: 0,
+		            max: 100
+		        },
+		        colors: [$UpdatingChartColors],
+		        series: {
+		            lines: {
+		                lineWidth: 1,
+		                fill: true,
+		                fillColor: {
+		                    colors: [{
+		                        opacity: 0.4
+		                    }, {
+		                        opacity: 0
+		                    }]
+		                },
+		                steps: false
+		
+		            }
+		        }
+		    };
+		
+		    flot_updating_chart = $.plot($("#updating-chart"), [getRandomData()], options);
+		
+		    /* live switch */
+		    $('input[type="checkbox"]#start_interval').click(function () {
+		        if ($(this).prop('checked')) {
+		            $on = true;
+		            updateInterval = 1500;
+		            update();
+		        } else {
+		            clearInterval(updateInterval);
+		            $on = false;
+		        }
+		    });
+		
+		    function update() {
+
+				try {
+			        if ($on == true) {
+			            flot_updating_chart.setData([getRandomData()]);
+			            flot_updating_chart.draw();
+			            setTimeout(update, updateInterval);
+			
+			        } else {
+			            clearInterval(updateInterval)
+			        }
+				}
+				catch(err) {
+				    clearInterval(updateInterval);
+				}
+		
+		    }
 		
 		    var $on = false;
 		
