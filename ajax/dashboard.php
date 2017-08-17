@@ -14,6 +14,9 @@ $grCnt="";
 $agTrip=0;
 $agTrip1=0;
 $agTrip2=0;
+$agTripOld=0;
+$agTrip3=0;
+$agTrip4="";
 $trip="";
 $cnt="";
 $income="";
@@ -24,6 +27,9 @@ $taDist="";
 $agCnt=0;
 $agCnt1=0;
 $agincome=0;
+$agincomeOld=0;
+$agIncome1=0;
+$agIncome2="";
 $agDist=0;
 $agDistFree=0;
 $total=0;
@@ -43,11 +49,13 @@ $sql="SELECT daily_date, count(1) as cnt, sum(income) as income, sum(trip_cnt) a
 if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
     while($row = mysqli_fetch_array($result)){
         $row1++;
-        $agTrip = ($row["trip_distance"] / $row["distance"] )*100;
-        $agTrip2 = ($row["trip_distance"] / $row["cnt"] );
-        $agCnt = ($row["trip_cnt"] / $row["cnt"] );
-        $agincome = ($row["income"] / $row["cnt"] );
-        $agDist = ($row["distance"] / $row["cnt"] );
+        $agTrip = ($row["trip_distance"] / $row["distance"])*100;
+        if($agTrip>$agTripOld) {$agTripOld=$agTrip;$agTrip3++;}$agTrip3--;
+        $agTrip2 = ($row["trip_distance"] / $row["cnt"]);
+        $agCnt = ($row["trip_cnt"] / $row["cnt"]);
+        $agincome = ($row["income"] / $row["cnt"]);
+        if($agincome>$agincomeOld) {$agincomeOld=$agincome;$agIncome1++;}else$agIncome1--;
+        $agDist = ($row["distance"] / $row["cnt"]);
         $agDistFree = $agDist - $agTrip2;
         $agTrip1 = 100-$agTrip;
         $agCnt1 = 100-$agCnt;
@@ -94,6 +102,8 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
     $agCar = $totalCar / $row1;
     $agIncome1 = $totalIncome / $row1;
     $agTrip3 = $agTrip3 / $row1;
+    $agIncome1>0?$agIncome2="fa fa-arrow-circle-up":$agIncome2="fa fa-arrow-circle-down";
+    $agTrip3>0?$agTrip4="fa fa-caret-up icon-color-bad":$agTrip4="fa fa-caret-down icon-color-bad";
 }else{
     echo mysqli_error($conn);
 }
@@ -154,7 +164,7 @@ mysqli_close($conn);
                     </div>
                 </li>
                 <li class="sparks-info">
-                    <h5> เฉลี่ยรายได้ต่อวัน <span class="txt-color-purple"><i class="fa fa-arrow-circle-up"></i>&nbsp;<?php echo number_format($agIncome1);?></span></h5>
+                    <h5> เฉลี่ยรายได้ต่อวัน <span class="txt-color-purple"><i class="<?php echo $agIncome2?>"></i>&nbsp;<?php echo number_format($agIncome1);?></span></h5>
                     <div class="sparkline txt-color-purple hidden-mobile hidden-md hidden-sm">
                             <?php echo $sparkIncome;?>
                     </div>
@@ -262,7 +272,7 @@ mysqli_close($conn);
                                                                 <div class="easy-pie-chart txt-color-orangeDark" data-percent="<?php echo $agTrip3;?>" data-pie-size="50">
                                                                         <span class="percent percent-sign">35</span>
                                                                 </div>
-                                                                <span class="easy-pie-title"> เฉลี่ยรับผู้โดยสาร <i class="fa fa-caret-up icon-color-bad"></i> </span>
+                                                                <span class="easy-pie-title"> เฉลี่ยรับผู้โดยสาร <i class="<?php echo $agTrip4;?>"></i> </span>
                                                                 <ul class="smaller-stat hidden-sm pull-right">
                                                                         <li>
                                                                                 <span class="label bg-color-greenLight"><i class="fa fa-caret-up"></i> 97%</span>
@@ -563,7 +573,7 @@ mysqli_close($conn);
 	 *
 	 */
 
-	 var flot_updating_chart, flot_statsChart, flot_multigraph, calendar;
+        var flot_updating_chart, flot_statsChart, flot_multigraph, calendar;
 
 	pageSetUp();
 	var inmax = $("#inmax").val();
