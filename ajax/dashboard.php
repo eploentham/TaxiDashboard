@@ -42,6 +42,7 @@ $curDate = date("Y-m-d");
 //echo getdate("Y.m.d");
 $maxTrip=0;
 $maxTripDate="";
+$linkDailyDate="";
 $sql="SELECT daily_date, count(1) as cnt, sum(income) as income, sum(trip_cnt) as trip_cnt, sum(trip_distance) as trip_distance, sum(distance) as distance FROM car_daily "
     ."Where daily_date <= '".$curDate."' and daily_date >= date_add('".$curDate."',INTERVAL -90 day) and income > 0 "
     ."Group By daily_date "
@@ -63,6 +64,7 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
         $cnt = number_format($agCnt,0,",","");
         $income = number_format($agincome,2,",","");
         $dailyDate = $row['daily_date'];
+        $linkDailyDate = "<a href='#ajax/taxiDailyView.php?daily_date=$dailyDate'>$dailyDate</a>";
         $cnt1 = number_format($row['cnt']);
         $sparkline .= $row["income"].", ";
         $total += $row["income"];
@@ -87,7 +89,7 @@ if ($result=mysqli_query($conn,$sql) or die(mysqli_error($conn))){
         $taIncome = "<table><tr><td width='40%'>".number_format($row["income"],2,".",",")."</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;".number_format($agincome,2,".",",")."&nbsp;บาท</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>";
         $taDist = '<table><tr><td width=40%>'.number_format($row['distance'],2,'.',',').'</td><td>&nbsp;&nbsp;เฉลี่ย&nbsp;'.number_format($agDist,2,'.',',').'&nbsp;กิโลเมตร</td><td>&nbsp;&nbsp;&nbsp;</td></tr></table>';
         
-        $tr.="<tr id='tr$row1'><td>$dailyDate$in$inCnt$inDistAll$inDistTrip</td><td>$cnt1</td><td>$taDist</td><td>$taTrip</td><td>$taCnt</td><td>$taIncome</td><td>$gr</td></tr>";
+        $tr.="<tr id='tr$row1'><td>$linkDailyDate$in$inCnt$inDistAll$inDistTrip</td><td>$cnt1</td><td>$taDist</td><td>$taTrip</td><td>$taCnt</td><td>$taIncome</td><td>$gr</td></tr>";
         
 //        $tr.="<tr><td>".$row["daily_date"]."</td><td>".number_format($row["cnt"])."</td><td>".$taDist."</td><td>"
 //            .$taTrip."</td><td>".$taCnt."</td><td>"
