@@ -5,7 +5,7 @@
 
 		<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
 		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
-                <script src="../js/libs/jquery-2.1.1.min.js"></script>
+                <script src="<?php echo ASSETS_URL; ?>/js/libs/jquery-2.1.1.min.js"></script>
 		<script>
 			if (!window.jQuery) {
 				document.write('<script src="<?php echo ASSETS_URL; ?>/js/libs/jquery-2.1.1.min.js"><\/script>');
@@ -13,7 +13,7 @@
 		</script>
 
 		<!--<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>-->
-                <script src="../js/libs/jquery-ui-1.10.3.min.js"></script>
+                <script src="<?php echo ASSETS_URL; ?>/js/libs/jquery-ui-1.10.3.min.js"></script>
 		<script>
 			if (!window.jQuery.ui) {
 				document.write('<script src="<?php echo ASSETS_URL; ?>/js/libs/jquery-ui-1.10.3.min.js"><\/script>');
@@ -78,3 +78,5 @@
 		<!-- SmartChat UI : plugin -->
 		<script src="<?php echo ASSETS_URL; ?>/js/smart-chat-ui/smart.chat.ui.min.js"></script>
 		<script src="<?php echo ASSETS_URL; ?>/js/smart-chat-ui/smart.chat.manager.min.js"></script>
+                
+                <script src="<?php echo ASSETS_URL; ?>/js/plugin/jquery-plugin-for-expandable-bootstrap-table-rows/bootstrap-table-expandable.js"></script>
