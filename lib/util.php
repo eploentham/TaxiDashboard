@@ -8,8 +8,9 @@ defined("DB_HOST") ? null : define("DB_HOST", "taxidashboard.ccegjxy0bmku.ap-sou
 defined("DB_USER") ? null : define("DB_USER", "oriscom");
 defined("DB_PASSWORD") ? null : define("DB_PASSWORD", "mocsiro1*");
 defined("DB_NAME") ? null : define("DB_NAME", "daily_report");
+defined("DB_PORT") ? null : define("DB_PORT", "3306");
 
-$conn = mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+$conn = mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME, DB_PORT);
 mysqli_set_charset($conn, "UTF8");
 //$sql="Select * From f_company_type Where active = '1' Order By comp_type_code";
 //$result = mysqli_query($conn,"Select * From f_company_type Where active = '1' Order By comp_type_code");
